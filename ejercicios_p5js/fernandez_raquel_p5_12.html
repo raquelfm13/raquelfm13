@@ -2,32 +2,35 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Calendario de texto</title>
+  <title> Calendario de texto</title>
+
+  <!-- Librería p5.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 </head>
 
 <body>
 <script>
 
- 
   // VARIABLES GENERALES
 
-  let xS, xL;
-  let rS, rL;
-  let vel;
+  let x;
+  let rS = 40;
+  let rL = 30;
+  let vel = 2;
+
+  // 0 = día (sol) | 1 = noche (luna)
+  let fase = 0;
+
 
   // VARIABLES DEL CALENDARIO
+
   let dia, mes, anio;
 
   function setup() {
     createCanvas(600, 400);
 
-    // Sol y Luna
-    rS = 40;
-    rL = 30;
-    xS = -rS;
-    xL = width + rL;
-    vel = 2;
+    // Posición inicial (lado izquierdo)
+    x = -rS;
 
     // Inicialización del calendario
     dia = 1;
@@ -39,59 +42,62 @@
 
     // FONDO DÍA / NOCHE
 
-    if (xS <= width + rS) {
+    if (fase === 0) {
       background(135, 206, 235); // día
     } else {
       background(10, 10, 50); // noche
     }
 
+    noStroke();
 
     // SOL
 
-    fill(255, 204, 0);
-    noStroke();
-    ellipse(xS, height / 2, rS * 2, rS * 2);
+    if (fase === 0) {
+      fill(255, 204, 0);
+      ellipse(x, height / 2, rS * 2, rS * 2);
+    }
 
 
     // LUNA
 
-    fill(220);
-    ellipse(xL, height / 2, rL * 2, rL * 2);
+    if (fase === 1) {
+      fill(220);
+      ellipse(x, height / 2, rL * 2, rL * 2);
+    }
 
     // Movimiento
-    xS = xS + vel;
-    xL = xL - vel;
+    x = x + vel;
 
-  
-    // REINICIO DEL CICLO
-    if (xS > 2 * width + rS) {
 
-      // Reinicio posiciones
-      xS = -rS;
-      xL = width + rL;
+    // CAMBIO DE FASE
 
-      // Incremento del día
-      dia = dia + 1;
+    if (x > width + rS) {
+      x = -rS;
+      fase = fase + 1;
 
-      // Control de días y meses
-      if (dia > 30) {
-        dia = 1;
-        mes = mes + 1;
-      }
+      // Si termina la noche, vuelve al día
+      if (fase > 1) {
+        fase = 0;
 
-      // Control de meses y años
-      if (mes > 12) {
-        mes = 1;
-        anio = anio + 1;
+        // Incremento del día
+        dia = dia + 1;
+
+        if (dia > 30) {
+          dia = 1;
+          mes = mes + 1;
+        }
+
+        if (mes > 12) {
+          mes = 1;
+          anio = anio + 1;
+        }
       }
     }
 
+
     // TEXTO DEL CALENDARIO
 
-    noStroke();
-
-    // Color del texto según día/noche
-    if (xS <= width + rS) {
+    if (fase === 0) {
       fill(0);
     } else {
       fill(255);
